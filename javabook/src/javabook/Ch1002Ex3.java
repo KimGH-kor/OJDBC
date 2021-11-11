@@ -33,7 +33,7 @@ public class Ch1002Ex3 {
 			System.out.println("DB Connected...");
 
 			while (true) {
-				System.out.print("1:조건조회, 2:입력, 3:전화번호변경, 4:삭제, 9:종료 = ");
+				System.out.print("1:조건조회, 2:입력, 3:전화번호변경, 4:삭제, 5:개인 조회, 9:종료 = ");
 				gubun = sc.next();
 
 				if ("9".equals(gubun)) {
@@ -72,11 +72,23 @@ public class Ch1002Ex3 {
 				}
 
 				if ("2".equals(gubun)) {
-					sql = "INSERT INTO CUSTOMER(CODE, NAME, EMAIL, TEL, WEIGHT)" + " VALUES(?,?,?,?,?)";
+					sql = "SELECT * FROM CUSTOMER WHERE CODE = ?";
 					pstmt = con.prepareStatement(sql);
 					System.out.println("고객 정보를 입력하세요");
-					System.out.print("코드      >> ");
+					System.out.print("코드         >>");
 					n_code = sc.nextInt();
+
+					pstmt.setInt(1, n_code);
+					rs = pstmt.executeQuery();
+
+					if (rs.next()) {
+						System.out.println("이미 존재하는 고객번호입니다.");
+						rs.close();
+						pstmt.close();
+						continue;
+					}
+					sql = "INSERT INTO CUSTOMER(CODE, NAME, EMAIL, TEL, WEIGHT)" + " VALUES("+n_code+",?,?,?,?)";
+					pstmt = con.prepareStatement(sql);
 					System.out.print("성명      >> ");
 					s_name = sc.next();
 					System.out.print("이메일     >> ");
@@ -86,11 +98,10 @@ public class Ch1002Ex3 {
 					System.out.print("체중      >> ");
 					d_weight = sc.nextDouble();
 
-					pstmt.setInt(1, n_code);
-					pstmt.setString(2, s_name);
-					pstmt.setString(3, s_email);
-					pstmt.setString(4, s_tel);
-					pstmt.setDouble(5, d_weight);
+					pstmt.setString(1, s_name);
+					pstmt.setString(2, s_email);
+					pstmt.setString(3, s_tel);
+					pstmt.setDouble(4, d_weight);
 
 					cnt = pstmt.executeUpdate();
 
@@ -104,16 +115,28 @@ public class Ch1002Ex3 {
 				}
 
 				if ("3".equals(gubun)) {
-					sql = "UPDATE CUSTOMER SET TEL = ? WHERE CODE = ?";
+					sql = "SELECT * FROM CUSTOMER WHERE CODE = ?";
 					pstmt = con.prepareStatement(sql);
 					System.out.println("전화번호를 변경할 회원코드를 입력하세요");
-					System.out.print("코드          >>");
+					System.out.print("코드         >>");
 					n_code = sc.nextInt();
+
+					pstmt.setInt(1, n_code);
+					rs = pstmt.executeQuery();
+
+					if (!rs.next()) {
+						System.out.println("존재하지 않는 고객입니다.");
+						rs.close();
+						pstmt.close();
+						continue;
+					}
+					
+					sql = "UPDATE CUSTOMER SET TEL = ? WHERE CODE = "+n_code;
+					pstmt = con.prepareStatement(sql);
 					System.out.print("변경할 전화번호 >>");
 					s_tel = sc.next();
 
 					pstmt.setString(1, s_tel);
-					pstmt.setInt(2, n_code);
 
 					cnt = pstmt.executeUpdate();
 
@@ -154,6 +177,36 @@ public class Ch1002Ex3 {
 						System.out.println("오류가 발생하였습니다.");
 					}
 
+					rs.close();
+					pstmt.close();
+				}
+				
+				if ("5".equals(gubun)) {
+					sql = "SELECT * FROM CUSTOMER WHERE CODE = ?";
+					pstmt = con.prepareStatement(sql);
+					System.out.println("조회할 회원코드를 입력하세요");
+					System.out.print("조회할 코드        >>");
+					n_code = sc.nextInt();
+					pstmt.setInt(1, n_code);
+
+					rs = pstmt.executeQuery();
+
+					cnt = 0;
+
+					while (rs.next()) {
+						System.out.println("code   = "+rs.getInt(1) + "\t");
+						System.out.println("name   = "+rs.getString(2) + "\t");
+						System.out.println("email  = "+rs.getString(3) + "\t");
+						System.out.println("tel    = "+rs.getString(4) + "\t");
+						System.out.println("weight = "+rs.getDouble(5));
+						cnt++;
+					}
+
+					if (cnt > 0) {
+						System.out.println("MSG    = 정상 조회되었습니다.");
+					} else {
+						System.out.println("해당 자료가 없습니다.");
+					}
 					rs.close();
 					pstmt.close();
 				}

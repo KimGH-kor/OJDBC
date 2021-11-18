@@ -7,7 +7,7 @@ public class CustomerDTO {
 	private String s_tel;
 	private double d_weight;
 	
-	public CustomerDTO() {}
+	
 	
 	public CustomerDTO(int n_code, String s_name, String s_email, String s_tel, double d_weight) {
 		this.n_code = n_code;

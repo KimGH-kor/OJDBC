@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset = UTF-8" >
+<title>ID 체크</title>
+<SCRIPT src=ch0260jscheck.js></SCRIPT>
+<SCRIPT>
+	function check(form){
+		if(form.div.value =="1" || form.div.value == "2"){
+			return true;
+		}else{
+			alert("요청 구분이 적절하지 않습니다.");
+			return false;
+		}
+		
+	}
+</SCRIPT>
+</head>
+<body bgcolor = white>
+	<form method = post action=/Myjsp/echo onSubmit='return check(this)'>
+		번호를 입력해주세요
+		<input type = text name = div>
+		<input type = submit value = "전송">
+		<input type = reset value = "취소">
+	</form>
+</body>
+</html>
